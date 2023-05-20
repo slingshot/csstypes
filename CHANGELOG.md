@@ -1,5 +1,11 @@
 # csstypes
 
+## 1.0.1
+
+### Patch Changes
+
+- 9278f53: Update docs to reflect scoped package name
+
 ## 1.0.0
 
 ### Major Changes
