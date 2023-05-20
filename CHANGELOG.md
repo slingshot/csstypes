@@ -1,5 +1,11 @@
 # csstypes
 
+## 1.1.0
+
+### Minor Changes
+
+- e364cf6: Add support for `var()` through the type `VarValue`
+
 ## 1.0.1
 
 ### Patch Changes
