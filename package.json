@@ -1,6 +1,6 @@
 {
     "name": "@ssh/csstypes",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "A set of strict type definitions for CSS length and color values",
     "types": "index.ts",
     "scripts": {
