@@ -1,0 +1,70 @@
+name: Release & publish docs
+on:
+  push:
+    branches:
+      - "main"
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Create Release Pull Request or Publish
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          publish: pnpm release
+          commit: "chore(release): publish"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Install Node.js and begin building docs if changesets were published
+        if: steps.changesets.outputs.published == 'true'
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+
+      - uses: pnpm/action-setup@v2
+        if: steps.changesets.outputs.published == 'true'
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: ^8.x
+          run_install: false
+
+      - name: Get pnpm store directory
+        if: steps.changesets.outputs.published == 'true'
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        if: steps.changesets.outputs.published == 'true'
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        if: steps.changesets.outputs.published == 'true'
+        run: pnpm install
+
+      - name: Build docs
+        if: steps.changesets.outputs.published == 'true'
+        run: pnpm build:docs
+
+      - name: Deploy docs
+        if: steps.changesets.outputs.published == 'true'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            publish_dir: ./docs
+            enable_jekyll: false
