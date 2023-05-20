@@ -1,4 +1,9 @@
 /**
+ * Represents the CSS var() function, which allows for the usage of CSS custom properties.
+ */
+export type VarValue = `var(${string})`;
+
+/**
  * Represents the CSS calc() function, which allows for computations with CSS values.
  */
 export type CalcValue = `calc(${string})`;
@@ -162,9 +167,9 @@ export type HslaColor = `hsla(${number}, ${number}%, ${number}%, ${number | `0.$
 /**
  * A composite type for all possible CSS color representations.
  */
-export type CSSColor = NamedColor | HexColor | HexColorAlpha | RgbColor | RgbaColor | HslColor | HslaColor;
+export type CSSColor = NamedColor | HexColor | HexColorAlpha | RgbColor | RgbaColor | HslColor | HslaColor | VarValue;
 
 /**
  * A composite type for all possible CSS length representations.
  */
-export type CSSLength = PixelSize | RemSize | EmSize | PercentageSize | ViewportWidthSize | ViewportHeightSize | VhSize | PointSize | PicaSize | ExSize | CapSize | ChSize | IcSize | LhSize | RlhSize | VminSize | VmaxSize | QSize | CentimeterSize | MillimeterSize | InchSize | CalcValue | MinValue | MaxValue | ClampValue;
+export type CSSLength = PixelSize | RemSize | EmSize | PercentageSize | ViewportWidthSize | ViewportHeightSize | VhSize | PointSize | PicaSize | ExSize | CapSize | ChSize | IcSize | LhSize | RlhSize | VminSize | VmaxSize | QSize | CentimeterSize | MillimeterSize | InchSize | CalcValue | MinValue | MaxValue | ClampValue | VarValue;
