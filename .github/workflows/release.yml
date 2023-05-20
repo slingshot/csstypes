@@ -13,6 +13,35 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: ^8.x
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
       - name: Create Release Pull Request or Publish
         id: changesets
         uses: changesets/action@v1
@@ -23,45 +52,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Install Node.js and begin building docs if changesets were published
-        if: steps.changesets.outputs.published == 'true'
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.x
-
-      - uses: pnpm/action-setup@v2
-        if: steps.changesets.outputs.published == 'true'
-        name: Install pnpm
-        id: pnpm-install
-        with:
-          version: ^8.x
-          run_install: false
-
-      - name: Get pnpm store directory
-        if: steps.changesets.outputs.published == 'true'
-        id: pnpm-cache
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - uses: actions/cache@v3
-        if: steps.changesets.outputs.published == 'true'
-        name: Setup pnpm cache
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
-        if: steps.changesets.outputs.published == 'true'
-        run: pnpm install
-
-      - name: Build docs
+      - name: Build docs if changes were published
         if: steps.changesets.outputs.published == 'true'
         run: pnpm build:docs
 
-      - name: Deploy docs
+      - name: Deploy docs if changes were published
         if: steps.changesets.outputs.published == 'true'
         uses: peaceiris/actions-gh-pages@v3
         with:
