@@ -1,6 +1,6 @@
 {
     "name": "csstypes",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "description": "A set of strict type definitions for CSS length and color values",
     "types": "index.ts",
     "scripts": {
