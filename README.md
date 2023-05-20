@@ -7,7 +7,7 @@
 Add `csstypes` as a dev dependency:
 
 ```sh
-pnpm install -D csstypes # or npm/yarn, of course
+pnpm install -D @ssh/csstypes # or npm/yarn, of course
 ```
 
 ## Usage
@@ -15,7 +15,7 @@ pnpm install -D csstypes # or npm/yarn, of course
 See the [documentation](https://slingshot.github.io/csstypes/) for a full list of available types.
 
 ```typescript
-import { CSSLength, CSSColor, PixelSize } from 'csstypes';
+import { CSSLength, CSSColor, PixelSize } from '@ssh/csstypes';
 
 // Valid values
 const length: CSSLength = '1em';
